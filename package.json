@@ -1,0 +1,40 @@
+{
+  "name": "gpt-web",
+  "version": "0.0.1",
+  "description": "一个基于逆向工程的 ChatGPT 命令行及 API 工具，支持账号登录 ChatGPT Web 版本，无需代理即可使用。",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "gpt-web": "./dist/bin/cli.js"
+  },
+  "scripts": {
+    "build": "rimraf -rf ./dist && tsc -p ./",
+    "test": "tsx ./tests/chat",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^18.6.0",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.6"
+  },
+  "author": "weaigc",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "debug": "^4.3.4",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "undici": "^5.22.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weaigc/gpt-web.git"
+  },
+  "keywords": [
+    "ai",
+    "chatgpt",
+    "gpt"
+  ]
+}
