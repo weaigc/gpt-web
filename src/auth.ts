@@ -280,6 +280,8 @@ export default class Auth {
       setConfig(
         {
           ...json,
+          email: this.email,
+          password: this.password,
           expires: this.expires,
         }
       )

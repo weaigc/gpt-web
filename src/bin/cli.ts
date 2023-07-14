@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 import Debug from 'debug';
-import { getConfig, setConfig } from '../config';
+import { getConfig } from '../config';
 import ChatGPTWeb from '../';
 import serve from '../server';
 import { RL } from '../utils/rl';
@@ -36,19 +36,16 @@ export async function cli(email: string, password: string) {
 }
 
 async function checkConfig(opts = {}, type: 'server' | 'cli') {
-  const config = await getConfig();
   const { email, password } = opts as any;
+  const config = await getConfig({
+    email,
+    password,
+  });
 
-  if(!email && !config.email || !password && !config.password) {
+  if(!config.email || !config.password) {
     throw new Error(`首次启动需要配置 OpenAI 账号密码，启动命令为 gpt-web ${type} -e 邮箱 -p 密码`);
   }
-  if (email && password) {
-    Object.assign(config, {
-      email,
-      password,
-    });
-  }
-  setConfig(config);
+
   return {
     email: config.email,
     password: config.password,

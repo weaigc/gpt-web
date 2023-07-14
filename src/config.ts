@@ -4,13 +4,19 @@ import { join } from 'node:path';
 
 const tokenPath = join(tmpdir(), 'gpt_web_token.json');
 
-export const getConfig = async () => {
+export const getConfig = async (initConfig: Record<string, any> = {}) => {
+  let config: Record<string, any> = {} = {};
   try {
     if (await fsp.lstat(tokenPath)) {
-      return JSON.parse(await fsp.readFile(tokenPath, 'utf-8'));
+      config = JSON.parse(await fsp.readFile(tokenPath, 'utf-8'));
     }
-  } catch (e) {
-    return {};
+  } finally {
+    Object.keys(initConfig).forEach((key) => {
+      if (initConfig[key] !== undefined) {
+        config[key] = initConfig[key];
+      }
+    });
+    return config;
   }
 };
 
