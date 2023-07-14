@@ -2,7 +2,7 @@
 
 # GPT Web
 
-> 一个基于逆向工程的 ChatGPT 命令行及 API 工具，支持账号登录 ChatGPT Web 版本，无需充值，无需代理即可使用。
+> 一个基于逆向工程的 ChatGPT 命令行及 API 工具，支持账号登录 ChatGPT Web 版本，无需充值，无需代理即可使用。没有账号的话推荐使用 [gradio-chatbot](https://github.com/weaigc/gradio-chatbot)。
 
 [![NPM](https://img.shields.io/npm/v/gpt-web.svg)](https://www.npmjs.com/package/gpt-web)
 [![Apache 2.0 License](https://img.shields.io/github/license/saltstack/salt)](https://github.com/weaigc/gpt-web/blob/main/license)
