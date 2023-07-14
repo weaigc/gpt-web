@@ -1,13 +1,9 @@
 #!/usr/bin/env node
 
-import * as readline from 'node:readline/promises';
-import assert from 'node:assert';
-import { promises as fsp } from 'node:fs';
-import { stdin as input, stdout as output } from 'node:process';
 import { Command } from 'commander';
 import Debug from 'debug';
+import { getConfig, setConfig } from '../config';
 import ChatGPTWeb from '../';
-import dotenv from 'dotenv';
 import serve from '../server';
 import { RL } from '../utils/rl';
 import { Spinner } from '../utils/spinner';
@@ -29,7 +25,7 @@ export async function cli(email: string, password: string) {
     const response = await bot.chat(prompt, {
       onMessage: (msg: string) => {
         spinner.write(msg.slice(lastLength));
-        lastLength = msg.length;
+        lastLength = msg.trim().length;
       },
     });
     spinner.write(response.slice(lastLength));
@@ -39,17 +35,23 @@ export async function cli(email: string, password: string) {
   }
 }
 
-dotenv.config();
-const email = process.env.OPENAI_EMAIL;
-const password = process.env.OPENAI_PASSWORD;
+async function checkConfig(opts = {}, type: 'server' | 'cli') {
+  const config = await getConfig();
+  const { email, password } = opts as any;
 
-function checkConfig(opts: any, type: 'server' | 'cli') {
-  if(!opts.email && !email) {
+  if(!email && !config.email || !password && !config.password) {
     throw new Error(`首次启动需要配置 OpenAI 账号密码，启动命令为 gpt-web ${type} -e 邮箱 -p 密码`);
   }
-  debug('opts', opts);
-  if (opts.email && opts.password) {
-    fsp.writeFile('.env', `OPENAI_EMAIL=${opts.email}\nOPENAI_PASSWORD=${opts.password}`);
+  if (email && password) {
+    Object.assign(config, {
+      email,
+      password,
+    });
+  }
+  setConfig(config);
+  return {
+    email: config.email,
+    password: config.password,
   }
 }
 
@@ -61,25 +63,24 @@ program
 
 
 program.command('server')
-  .description('启动一个 OpenAI 接口格式的服务器')
+  .description('启动一个 OpenAI 格式的接口服务器')
   .option('-P, --port', '服务端口号, 默认为 8000')
   .option('-e, --email <value>', 'OpenAI 邮箱，仅第一次需要')
-  .option('-p, --password <value>', 'OPENAI 密码，仅第一次需要')
-  .action((opts) => {
+  .option('-p, --password <value>', 'OpenAI 密码，仅第一次需要')
+  .action(async (opts) => {
     debug('server mode');
-    checkConfig(opts, 'server');
-    serve(opts.email || email, opts.password || password, opts.port);
+    const { email, password } = await checkConfig(opts, 'server');
+    serve(email, password, opts.port);
   });
 
 program.command('cli')
   .description('终端聊天机器人')
   .option('-e, --email <value>', 'OpenAI 邮箱，仅第一次需要')
-  .option('-p, --password <value>', 'OPENAI 密码，仅第一次需要')
-  .parse()
-  .action((opts) => {
+  .option('-p, --password <value>', 'OpenAI 密码，仅第一次需要')
+  .action(async (opts) => {
     debug('cli mode');
-    checkConfig(opts, 'cli');
-    cli(opts.email || email, opts.password || password);
+    const { email, password } = await checkConfig(opts, 'cli');
+    cli(email, password);
   });
 
 program.parse();

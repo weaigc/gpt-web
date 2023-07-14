@@ -1,11 +1,9 @@
 // original code https://github.com/acheong08/OpenAIAuth/blob/main/src/OpenAIAuth.py
 
 import assert from 'node:assert';
-import { promises as fsp } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import fetch from './fetch';
 import Debug from 'debug';
+import { getConfig, setConfig } from './config';
 
 const debug = Debug('gpt-web:auth');
 
@@ -17,6 +15,7 @@ function default_api_prefix() {
   return `https://ai-${formattedDate}.fakeopen.com`;
 }
 
+
 export default class Auth {
   email: string;
   password: string;
@@ -25,7 +24,6 @@ export default class Auth {
   expires: number;
   puid: string;
   cookie: string;
-  private readonly tokenPath = join(tmpdir(), 'gpt_web_token.json');
   constructor(
     email,
     password,
@@ -46,17 +44,14 @@ export default class Auth {
       debug('from instance', this.accessToken);
       return this.accessToken;
     }
-    try {
-      if (await fsp.lstat(this.tokenPath)) {
-        const json = JSON.parse(await fsp.readFile(this.tokenPath, 'utf-8'));
-        if (json.expires > Date.now()) {
-          this.expires = json.expires;
-          this.accessToken = json.access_token;
-          debug('from cache', this.accessToken);
-          return this.accessToken;
-        }
-      }
-    } catch (e) { }
+    const json = await getConfig();
+    if (json.expires > Date.now()) {
+      this.expires = json.expires;
+      this.accessToken = json.access_token;
+      debug('from cache', this.accessToken);
+      return this.accessToken;
+    }
+    
     assert(this.__check_email(this.email) && this.password, 'invalid email or password.');
     return this.partOne();
   }
@@ -282,10 +277,12 @@ export default class Auth {
         + json['expires_in'] * 1000
         - 60 * 60000;
 
-      fsp.writeFile(this.tokenPath, JSON.stringify({
-        ...json,
-        expires: this.expires,
-      }));
+      setConfig(
+        {
+          ...json,
+          expires: this.expires,
+        }
+      )
       return this.accessToken;
     } else {
       throw new Error(resp.statusText)

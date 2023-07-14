@@ -110,6 +110,9 @@ export default class ChatGPT {
             const message = json.message;
 
             if (message && typeof message === 'object') {
+              if (message.author.role !== 'assistant') {
+                return;
+              }
               let text = message?.content?.parts?.[0];
 
               if (text) {
