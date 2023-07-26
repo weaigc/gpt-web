@@ -43,7 +43,8 @@ async function checkConfig(opts = {}, type: 'server' | 'cli') {
   });
 
   if(!config.email || !config.password) {
-    throw new Error(`首次启动需要配置 OpenAI 账号密码，启动命令为 gpt-web ${type} -e 邮箱 -p 密码`);
+    console.log(`首次启动需要配置 OpenAI 账号密码，启动命令为 gpt-web ${type} -e 邮箱 -p 密码`);
+    return;
   }
 
   return {

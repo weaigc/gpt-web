@@ -273,9 +273,10 @@ export default class Auth {
       }
 
       this.accessToken = json['access_token']
-      this.expires = Date.now()
-        + json['expires_in'] * 1000
-        - 60 * 60000;
+      // this.expires = Date.now()
+      //   + json['expires_in'] * 1000
+      //   - 60 * 60000;
+      this.expires = Date.now() + 24 * 60 * 60 * 1000; // expire time hard code 1 day
 
       setConfig(
         {

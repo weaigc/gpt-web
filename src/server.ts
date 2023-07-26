@@ -1,10 +1,21 @@
 import express from 'express';
 import assert from 'assert';
+import Debug from 'debug'
 import ChatGPTWeb from '.';
 import type { APIRequest, APIResponse } from './types.d';
 
+const debug = Debug('gpt-web:server')
+
 const app = express();
 app.use(express.json());
+
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err)
+  }
+  res.status(500)
+  res.render('error', { error: err })
+})
 
 function parseOpenAIMessage(request: APIRequest) {
   return {
@@ -36,23 +47,33 @@ export default function serve(email: string, password: string, port = 8000) {
     res.json(response);
   });
 
-  app.get(['/', '/api/conversation'], async (req, res) => {
+  app.get(['/', '/api/conversation'], async (req, res, next) => {
     const { text, model } = req.query || {};
     if (!text) {
       return res.status(500).write('text参数不能为空');
     }
-    res.set('Cache-Control', 'no-cache');
-    res.set('Content-Type', 'text/event-stream;charset=utf-8');
-    let lastLength = 0;
-    const content = await chatbot.chat(text, {
-      model,
-      onMessage: (msg) => {
-        res.write(msg.slice(lastLength));
-        lastLength = msg.length;
-      }
-    });
-    res.end(content.slice(lastLength));
+    res.set('Content-Type', 'text/stream; charset=UTF-8');
+    res.set('Transfer-Encoding', 'chunked');
+    try {
+      let lastLength = 0;
+      const response = await chatbot.chat(text, {
+        model,
+        onMessage: (msg) => {
+          if (msg.length > lastLength) {
+            const chunk = msg.slice(lastLength)
+            res.write(chunk);
+            res.flushHeaders();
+            lastLength = msg.length;
+          }
+        }
+      });
+      debug('response', response)
+      res.end();
+    } catch (err) {
+      next(err)
+    }
   });
+
 
   app.listen(port, '0.0.0.0');
   console.log(`\n服务启动成功，测试链接: http://localhost:${port}/api/conversation?text=hello\n`);

@@ -119,7 +119,7 @@ export default class ChatGPT {
                 result.text = text;
                 onMessage?.(result);
               }
-            } else {
+            } else if (message) {
               reject(message);
             }
           } catch (err) { }
