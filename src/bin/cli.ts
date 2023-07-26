@@ -56,13 +56,13 @@ async function checkConfig(opts = {}, type: 'server' | 'cli') {
 const program = new Command();
 program
   .name('gpt-web')
-  .description('一个基于 ChatGPT Web 版本的聊天机器人')
+  .description(`一个基于 ChatGPT Web 版本的聊天机器人 ${pkg.version}`)
   .version(pkg.version);
 
 
 program.command('server')
   .description('启动一个 OpenAI 格式的接口服务器')
-  .option('-P, --port', '服务端口号, 默认为 8000')
+  .option('-P, --port <value>', '服务端口号, 默认为 8000')
   .option('-e, --email <value>', 'OpenAI 邮箱，仅第一次需要')
   .option('-p, --password <value>', 'OpenAI 密码，仅第一次需要')
   .action(async (opts) => {
