@@ -1,6 +1,10 @@
 {
   "name": "gpt-web",
+<<<<<<< HEAD
   "version": "0.0.7",
+=======
+  "version": "0.0.6",
+>>>>>>> 0a19eca1392e8d829906948b8f77024624110421
   "description": "一个基于逆向工程的 ChatGPT 命令行及 API 工具，支持账号登录 ChatGPT Web 版本，无需代理即可使用。",
   "main": "dist/index.js",
   "engines": {
