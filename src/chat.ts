@@ -1,5 +1,5 @@
-import { randomUUID } from 'node:crypto';
-import assert from 'node:assert';
+import { randomUUID } from 'crypto';
+import assert from 'assert';
 import Debug from 'debug';
 import fetch from './fetch';
 import * as types from './types.d';

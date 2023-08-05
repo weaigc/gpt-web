@@ -3,7 +3,7 @@ import { GPTOpts } from './types.d';
 import ChatGPT from './chat';
 
 export default class ChatGPTWeb {
-  accessToken: string;
+  accessToken: string = process.env.ACCESS_TOKEN;
   private chatbot: ChatGPT;
   constructor(readonly email: string, readonly password: string) {}
   async chat(input: string, options?: GPTOpts) {
