@@ -1,6 +1,6 @@
 // original code https://github.com/acheong08/OpenAIAuth/blob/main/src/OpenAIAuth.py
 
-import assert from 'node:assert';
+import assert from 'assert';
 import fetch from './fetch';
 import Debug from 'debug';
 import { getConfig, setConfig } from './config';
@@ -55,7 +55,7 @@ export default class Auth {
     assert(this.__check_email(this.email) && this.password, 'invalid email or password.');
     return this.partOne();
   }
-
+  
   private async partOne() {
     const url = `${default_api_prefix()}/auth/preauth`;
     const headers = {
