@@ -76,6 +76,7 @@ export interface APIMessage {
 }
 
 export interface APIRequest {
+  stream?: string
   model: Model
   action: Action
   messages: APIMessage[]
