@@ -1,5 +1,6 @@
 import express from 'express';
 import assert from 'assert';
+import cors from 'cors';
 import Debug from 'debug'
 import ChatGPTWeb from '.';
 import type { APIRequest, APIResponse } from './types.d';
@@ -7,6 +8,7 @@ import type { APIRequest, APIResponse } from './types.d';
 const debug = Debug('gpt-web:server')
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.use((err, req, res, next) => {
