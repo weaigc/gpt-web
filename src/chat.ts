@@ -11,7 +11,6 @@ export default class ChatGPT {
   private parentMessageId: string = randomUUID();
   constructor(
     readonly accessToken: string,
-    readonly model: types.Model = 'gpt-3.5-turbo',
     readonly proxyUrl: string = 'https://ai.fakeopen.com/api/conversation',
   ) { }
 
@@ -22,6 +21,7 @@ export default class ChatGPT {
     const {
       timeout,
       action,
+      model = 'gpt-3.5-turbo',
       onMessage,
     } = opts;
 
@@ -46,7 +46,7 @@ export default class ChatGPT {
           },
         },
       ],
-      model: this.model,
+      model,
       parent_message_id: this.parentMessageId,
     }
 
@@ -158,5 +158,16 @@ export default class ChatGPT {
     });
 
     return responseP;
+  }
+
+  async getModels() {
+    const headers = {
+      Authorization: `Bearer ${this.accessToken}`,
+      Accept: 'text/event-stream',
+      'Content-Type': 'application/json',
+    };
+    return fetch(`https://ai.fakeopen.com/api/models`, {
+      headers,
+    }).then(res => res.json())
   }
 }

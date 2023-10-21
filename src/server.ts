@@ -85,6 +85,7 @@ export default function serve(email: string, password: string, port = 8000) {
     let lastLength = 0;
     assert(prompt, 'messages can\'t be empty!');
     const content = await chatbot.chat(prompt, {
+      model,
       onMessage(msg) {
         if (isStream) {
           res.write(`data: ${JSON.stringify(responseOpenAIMessage(msg.slice(lastLength)))}\n\n`);
@@ -101,7 +102,12 @@ export default function serve(email: string, password: string, port = 8000) {
       const response = responseOpenAIMessage(content);
       res.json(response);
     }
-  });  
+  });
+
+  app.get(/.*\/models$/, async (req, res) => {
+    const models = await chatbot.getModels()
+    return res.json(models)
+  })
 
   app.listen(port, '0.0.0.0');
   console.log(`\n服务启动成功，测试链接: http://localhost:${port}/api/conversation?text=hello\n`);

@@ -6,14 +6,18 @@ export default class ChatGPTWeb {
   accessToken: string = process.env.ACCESS_TOKEN;
   private chatbot: ChatGPT;
   constructor(readonly email: string, readonly password: string) {}
-  async chat(input: string, options?: GPTOpts) {
+  private async init() {
     if (!this.chatbot) {
       if (!this.accessToken) {
         this.accessToken = await new Auth(this.email, this.password).getAccessToken();
       }
       this.chatbot = new ChatGPT(this.accessToken);
     }
+  }
+  async chat(input: string, options?: GPTOpts) {
+    await this.init()
     const response = this.chatbot.sendMessage(input, {
+      model: options.model,
       onMessage: (message) => {
         options?.onMessage?.(message.text);
       },
@@ -21,5 +25,9 @@ export default class ChatGPTWeb {
       text: `${e}`,
     }));
     return (await response).text;
+  }
+  async getModels() {
+    await this.init()
+    return this.chatbot.getModels()
   }
 }

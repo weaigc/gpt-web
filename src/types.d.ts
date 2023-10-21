@@ -5,6 +5,7 @@ export type Model = 'gpt-3.5-turbo' | 'gpt-4' | 'gpt-4-32k';
 export type SendMessageBrowserOptions = {
   timeout?: number
   action?: Action
+  model?: Model
   onMessage?: (partialResponse: ChatMessage) => void
   abortSignal?: AbortSignal
 }
