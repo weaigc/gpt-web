@@ -3,7 +3,7 @@ import assert from 'assert';
 import cors from 'cors';
 import Debug from 'debug'
 import ChatGPTWeb from '.';
-import type { APIRequest, APIResponse } from './types.d';
+import type { APIMessage, APIRequest, APIResponse } from './types.d';
 
 const debug = Debug('gpt-web:server')
 
@@ -27,14 +27,15 @@ function parseOpenAIMessage(request: APIRequest) {
   };
 }
 
-function responseOpenAIMessage(content: string, input?: string): APIResponse {
+function responseOpenAIMessage(content: string): APIResponse {
+  const message: APIMessage = {
+    role: 'assistant',
+    content,
+  };
   return {
-    whisper: input,
     choices: [{
-      message: {
-        role: 'assistant',
-        content,
-      },
+      delta: message,
+      message,
     }],
   };
 }

@@ -87,6 +87,7 @@ export interface APIResponse {
   whisper?: string
   choices: {
     message: APIMessage
+    delta?: APIMessage
   }[]
 }
 
