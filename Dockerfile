@@ -1,0 +1,24 @@
+FROM node:18
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+ENV BING_HEADER ""
+
+# Set home to the user's home directory
+ENV HOME=/home/user \
+	PATH=/home/user/.local/bin:$PATH
+
+# Set up a new user named "user" with user ID 1000
+RUN useradd -o -u 1000 user && mkdir -p $HOME/app && chown -R user $HOME
+
+# Switch to the "user" user
+USER user
+
+# Set the working directory to the user's home directory
+WORKDIR $HOME/app
+
+RUN npm i -g gpt-web@latest
+
+EXPOSE 8000
+
+CMD gpt-web server

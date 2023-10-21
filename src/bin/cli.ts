@@ -2,12 +2,15 @@
 
 import { Command } from 'commander';
 import Debug from 'debug';
+import dotenv from 'dotenv';
 import { getConfig } from '../config';
 import ChatGPTWeb from '../';
 import serve from '../server';
 import { RL } from '../utils/rl';
 import { Spinner } from '../utils/spinner';
 const pkg = require('../../package.json');
+
+dotenv.config();
 
 const debug = Debug('gpt-web:cli');
 
@@ -36,7 +39,8 @@ export async function cli(email: string, password: string) {
 }
 
 async function checkConfig(opts = {}, type: 'server' | 'cli') {
-  const { email, password } = opts as any;
+  const { OPENAI_PASSWORD, OPENAI_EMAIL } = process.env || {}
+  const { email = OPENAI_PASSWORD, password = OPENAI_EMAIL } = opts as any;
   const config = await getConfig({
     email,
     password,

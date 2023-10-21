@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  gpt-web:
+    ports:
+      - 3000:3000
+    build: .
+    environment:
+      - OPENAI_EMAIL=$OPENAI_EMAIL
+      - OPENAI_PASSWORD=$OPENAI_PASSWORD
+    extra_hosts:
+        - "host.docker.internal:host-gateway"
