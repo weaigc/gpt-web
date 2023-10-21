@@ -1,4 +1,4 @@
-import Auth from "./auth";
+import Auth from './auth2';
 import { GPTOpts } from './types.d';
 import ChatGPT from './chat';
 
